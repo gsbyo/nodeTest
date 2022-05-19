@@ -21,7 +21,7 @@ function Logged_in(req, res ,next) {
 
 function getIP(req) {
     const addr = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    return addr
+    return addr;
 }
 
 router.get('/', (req, res) => { 
@@ -36,9 +36,9 @@ router.get('/', (req, res) => {
           .select('seq title writer day')
           .exec((find_err, data) => {
 
-       boards.count({}, ( count_err ,count ) => {
-         res.render('board.ejs', { posts : data,  totalCount : count } );
-       }) 
+        postCount.findOne({}).exec((count_err, total) => {
+         res.render('board.ejs', { posts : data,  totalCount : total.count } );
+        });
     });
 })
 

@@ -1,6 +1,13 @@
 const express = require('express');
 const app = express();
 
+const helmet = require('helmet');
+app.use(
+    helmet({
+      contentSecurityPolicy : false,
+    })
+);
+
 require('dotenv').config();
 
 const bodyParser= require('body-parser')
@@ -46,6 +53,8 @@ const loginRouter = require('./router/login');
 app.use("/auth", loginRouter);
 
 const boardRouter = require('./router/board');
+const req = require('express/lib/request');
+const { contentSecurityPolicy } = require('helmet');
 
 app.use("/board", boardRouter);
 
