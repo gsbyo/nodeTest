@@ -1,0 +1,113 @@
+#post-container{
+  width: 1000px;
+  margin: 0 auto;
+  background-color: white;
+}
+
+#title-wrap{
+    padding: 10px;
+    border-bottom: 1px solid gainsboro;
+    width: 95%;
+    margin: 0 auto;
+    
+}
+
+#title-box{
+    margin: 0 auto;
+    padding: 10px;
+}
+
+#ex-box{
+    margin: 0 auto;
+    text-align: right;
+    padding: 10px;
+}
+
+#content-box{
+    min-height: 600px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+
+}
+
+#comment-container{
+    width: 1000px;
+    margin: 0 auto;
+    border-radius: 4px;
+    margin-top: 20px;
+    background-color: white;
+}
+
+#comment-form{
+  border-bottom: 2px solid gainsboro;
+  padding-bottom: 15px;
+}
+
+#comment-area{
+    text-align: center;
+    padding: 10px;
+}
+
+#comment-area textarea{
+   height: 100px;
+   width: 100%;
+   padding: 10px;
+   resize:vertical;
+   box-sizing: border-box;
+   
+}
+
+.button-wrap{
+    text-align: right;
+    padding: 10px;
+    
+}
+
+#comment-button{
+    padding: 10px;
+    background-color: deepskyblue;
+    color: white;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#comment-box{
+}
+
+.comment{
+    padding: 10px;
+}
+
+.comment-user{
+  padding: 10px;
+  border-bottom: 1px solid gainsboro;
+}
+
+.comment-content{
+  
+    padding: 10px;
+}
+
+
+#paging-box{
+    width: 1000px;
+    margin: 0 auto;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#paging-box a{
+    border: 1px solid black;
+    border-radius: 4px;
+    margin-right: 5px;
+    padding: 5px;
+    background-color: white;
+    cursor: pointer;
+    text-decoration: none;
+    
+}

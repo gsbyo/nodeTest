@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>게시글</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/post.css">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body style="background-color: ghostwhite;">
+
+    <%- include('topmenu.ejs') %>
+        <div id="post-container">
+            <div id="title-wrap">
+                <div id="title-box">
+                    <h2>
+                        <%= post.title %>
+                    </h2>
+                </div>
+                <div id="ex-box">
+                    <span>
+                        <%= post.writer %>
+                            <%= post.views %>
+                                <%= post.day %>
+                    </span>
+                </div>
+            </div>
+            <div id="content-box">
+                <div>
+                <%- post.content %>
+                </div>
+            </div>
+        </div>
+
+        <div id="comment-container">
+            <div id="comment-form">
+                <div id="comment-area">
+                    <textarea id="comment-input"></textarea>
+                </div>
+                <div class="button-wrap">
+                    <button id="comment-button">댓글 작성</button>
+                </div>
+            </div>
+
+            <div id="comment-box">
+             <div id="h3-comment" style="padding: 10px;">
+             <h3 style="padding: 10px;">Comments</h3>
+            </div>
+             <% for(var i = 0; i < comment.length; ++i){ %>
+               <div class="comment">
+                   <div class="comment-user">
+                    <span><%= comment[i].user %> <%= comment[i].day %></span>
+                   </div>
+                   <div class="comment-content">
+                    <span><%= comment[i].content %></span>
+                  </div>
+               </div>
+               <% } %>
+               <div id="paging-box">
+                  
+               </div>
+            </div>
+        </div>
+
+        <script>
+
+            $.urlParam = function (name) {
+                var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+                if (results == null) return "";
+                return results[1] || 0;
+            }
+
+            var viewCount = 5;
+            var pageCount = 5;
+            var totalComment = "<%= totalCount %>";
+            var curPost = $.urlParam('pid');
+            var curPage = 1;
+
+            var limitPage = Math.ceil(totalComment / viewCount);
+            var startPage = Math.floor(curPage / pageCount);
+
+
+          if(totalComment > 0){
+            $('#paging-box').append(`<a id="prev">&#10094;</a>`);
+
+            for (let i = (startPage * pageCount) + 1; i <= ((startPage + 1) * pageCount) && i <= limitPage; ++i) {
+                $('#paging-box').append(`<a class="page-a">${i}</a>`);
+            }
+
+            $('#paging-box').append(`<a id="next">&#10095;</a>`);
+          }
+
+
+            $('.page-a').on('click', function () {
+                $.ajax({
+                    type: "get",
+                    url: "/board/post/comment?pid=" + $.urlParam("pid") + "&page=" + $(this).text()
+                }).done(function (res) {
+                    $('.comment').remove();
+                    for (var i = 0; i < res.comment.length; ++i) {
+                        $('#comment-box').children('#h3-comment').append(`
+                               <div class="comment">
+                                <div class="comment-user">
+                                <span>${res.comment[i].user} ${res.comment[i].day}</span>
+                               </div>
+                               <div class="comment-content">
+                                <span>${res.comment[i].content}</span>
+                               </div>
+                               </div>
+                               `)
+                    }
+                }).fail(function (error) {
+
+                })
+            })
+
+            $('#comment-button').on('click', () => {
+                if ("<%= currentUser %>") {
+                    $.ajax({
+                        type: "POST",
+                        url: "/board/post/comment",
+                        data: {
+                            post_id: curPost,
+                            content: $('#comment-input').val()
+                        }
+                    }).done(function (res) {
+                        alert("댓글을 등록하였습니다.");
+                        location.reload();
+                    }).fail(function (error) {
+                        alert("댓글 등록을 실패하였습니다.");
+                    })
+                } else {
+                    alert("로그인 후 댓글 작성이 가능합니다.");
+                    location.reload();
+                }
+            })
+
+
+
+        </script>
+
+</body>
+
+</html>

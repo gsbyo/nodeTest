@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>게시판</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/board.css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+</head> 
+<body style="background-color: gainsboro;">
+    <%- include('topmenu.ejs') %>
+    <div id="board-container">
+        <table>
+           <tr id="t-header"> 
+                <td>번호</td>
+                <td>제목</td>
+                <td>작성자</td>
+                <td>날짜</td>
+            </tr>
+            <% for(var i = 0; i < posts.length; ++i){ %>
+            <tr class="post-box">
+                <td class="post-id"><%= posts[i].seq %></td>
+                <td><%= posts[i].title %></td>
+                <td><%= posts[i].writer %></td>
+                <td><%= posts[i].day %></td>
+            </tr>
+            <% } %>
+        </table>
+    </div>
+    <div id="paging-box">
+       
+    </div>
+    <div class="button-wrap">
+        <select id="search-option">
+            <option value="1">제목</option>
+            <option value="2">내용</option>
+            <option value="3">제목+내용</option>
+        </select>
+        <input type="text" id="search-input" placeholder="검색어를 입력해주세요">
+        <button type="button" id="search-button">검색</button>
+        <button type="button" onclick="location.href='/board/post/write';">글쓰기</button>
+    </div>
+    
+   
+
+    <script>
+        $('.post-box').on('click', function(){
+            let post_number = $(this).children('.post-id').text();
+
+            window.location.href = '/board/post/visited?pid='+ post_number;
+        });
+
+        
+        $('#search-button').on('click', () => {
+            window.location.href = '/board/search/post?&page=1&stx='+ $('#search-input').val() + "smt="+ $('#search-option option:selected').val();
+        })
+
+        $.urlParam = function(name){
+           var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+
+           if(results == null) return "";
+           
+           return results[1] || 0;
+        }
+        
+        var viewCount = 5; 
+        var pageCount = 5;
+        var totalCount = "<%= totalCount %>";
+
+        var curPage = $.urlParam('page');
+        var searchText = $.urlParam('stx');
+        var method = $.urlParam('smt');
+        var next = $.urlParam('snx');
+       
+        var limitPage = Math.ceil(totalCount / viewCount) ; 
+        var startPage = Math.ceil(curPage / pageCount) ;  
+
+    
+      if(totalCount > 0) {
+
+        if(curPage <= pageCount){
+          if(next == ""){
+           $('#paging-box').append(`<a href="/board/search/post?page=1&smt=${ method }&stx=${ searchText }">&#10094;</a>`);
+           }else{
+           $('#paging-box').append(`<a href="/board/search/post?page=1&smt=${ method }&stx=${ searchText }&snx=${ next }">&#10094;</a>`);   
+           }
+        }else{
+          if(next == ""){
+           $('#paging-box').append(`<a href="/board/search/post?page=${(1 + (((Math.floor( curPage / pageCount ) - 1) * pageCount)) )}&smt=${ method }&stx=${ searchText }">&#10094;</a>`);
+          }else{
+           $('#paging-box').append(`<a href="/board/search/post?page=${(1 + (((Math.floor( curPage / pageCount ) - 1) * pageCount)) )}&smt=${ method }&stx=${ searchText }&snx=${ next }">&#10094;</a>`);   
+          }
+        }
+
+        for(var i = ((startPage - 1) * pageCount) + 1; i <= ( startPage * pageCount )&& i <= limitPage; ++i){
+            if(next == ""){
+              if(curPage == i){
+                $('#paging-box').append(`<a style="background-color:silver" href="/board/search/post?page=${i}&smt=${ method }&stx=${ searchText }">${i}</a>`);
+              }else{
+                $('#paging-box').append(`<a href="/board/search/post?page=${i}&smt=${ method }&stx=${ searchText }">${i}</a>`);
+              }
+            }else{
+                if(curPage == i){
+                    $('#paging-box').append(`<a tyle="background-color:silver" href="/board/search/post?page=${i}&smt=${ method }&stx=${ searchText }&snx=${ next }">${i}</a>`);
+                }else{
+                    $('#paging-box').append(`<a href="/board/search/post?page=${i}&smt=${ method }&stx=${ searchText }&snx=${ next }">${i}</a>`);
+                }
+             
+            }
+        }
+
+        if(curPage == limitPage){
+           if(next == ""){
+            $('#paging-box').append(`<a href="/board/search/post?page=${( limitPage )}&smt=${ method }&stx=${ searchText }">&#10095;</a>`);
+           }else{
+           $('#paging-box').append(`<a href="/board/search/post?page=${( limitPage )}&smt=${ method }&stx=${ searchText }&snx=${ next }">&#10095;</a>`);   
+           }
+        }else{
+          if(next == ""){
+           $('#paging-box').append(`<a href="/board/search/post?page=${( (1 + (Math.ceil( curPage / pageCount ) * pageCount ) ) )}&smt=${ method }&stx=${ searchText }">&#10095;</a>`);
+          }else{
+           $('#paging-box').append(`<a href="/board/search/post?page=${(  (1 + (Math.ceil( curPage / pageCount ) * pageCount ) )   )}&smt=${ method }&stx=${ searchText }&snx=${ next }">&#10095;</a>`);   
+          }
+        }
+
+
+        if(next == ""){
+            $('#paging-box').append(`<a href="/board/search/post?page=1&smt=${ method }&stx=${ searchText }&snx=1">다음검색</a>`);  
+        }else{
+            if(next == 1){ 
+                $('#paging-box').append(`<a href="/board/search/post?page=1&smt=${ method }&stx=${ searchText }&snx=${parseInt(next) + 1}">다음검색</a>`);  
+            }else{
+                $('#paging-box').prepend(`<a href="/board/search/post?page=1&smt=${ method }&stx=${ searchText }&snx=${next - 1}">이전검색</a>`);   
+                $('#paging-box').append(`<a href="/board/search/post?page=1&smt=${ method }&stx=${ searchText }&snx=${parseInt(next) + 1}">다음검색</a>`);  
+            }
+        }
+        
+    }else{
+        //검색결과가 없다는걸 띄워주면됨.
+    }
+
+    </script>
+    
+</body>
+
+</html>

@@ -8,7 +8,7 @@
         <div id="login-container">
             <div id="login-wrap">
                 <h2 style="width: 100%; text-align: center; color: gray;">회원 로그인</h2>
-                <form action="/login" method="post">
+                <form action="/auth/login" method="post">
                 <div id="login-box">
                         <div class="input-box" style="margin-top: 20px;">
                             <input type="text" id="id" name="id" placeholder="아이디를 입력하세요">
@@ -17,17 +17,19 @@
                             <input type="text" id="pwd" name="pwd" placeholder="비밀번호를 입력하세요">
                         </div>
                         <div id="button-box">
-                            <p><button type="submit" class="login-button" style="background-color: lightpink;">로그인</button></p>
-                            <p><button class="login-button" style="background-color:lime">네이버 로그인</button></p>
+                            <p><button type="submit" class="login-button" style="background-color: deepskyblue;">로그인</button></p>
+                            <p><a href="/auth/naver"><button class="login-button" type="button" style="background-color: #03C75A;">네이버 로그인</button></a></p>
                         </div>
                 </div>
             </form>
                 <div id="etc-box">
                     <button>아이디 찾기</button>
                     <button>비밀번호 찾기</button>
-                    <button>회원가입</button>
+                    <button onclick="">회원가입</button>
                 </div>
             </div>
         </div>
+
+        <script></script>
     </body>
     </html>

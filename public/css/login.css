@@ -26,6 +26,10 @@
    margin: 0 auto;
 }
 
+#button-box p{
+ 
+}
+
 .input-box{
     width: 100%;
     padding: 10px;
@@ -41,6 +45,8 @@
    outline: 1px solid gray;
 }
 
+
+
 .login-button{
     width: 100%;
     height: 45px;
@@ -51,6 +57,9 @@
     border: 4px;
     color: white;
 }
+
+
+
 
 #etc-box{
     width: 100%;

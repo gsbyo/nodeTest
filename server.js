@@ -3,7 +3,6 @@ const app = express();
 
 require('dotenv').config();
 
-
 const bodyParser= require('body-parser')
 app.use(bodyParser.urlencoded({extended: true})) 
 
@@ -17,42 +16,38 @@ app.use(session({secret : process.env.SESSION_SECRET, resave : true, saveUniniti
 app.use(passport.initialize());
 app.use(passport.session()); 
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 // -- DB connect -- // 
-const dbConnection = require('./config/db');
+const dbcon = require('./config/db');
+dbcon();
 
-dbConnection.connect((err) => {
-    if (err)  return console.log(err);
 
-    app.db = dbConnection.getDB();
-    console.log("db connect success");
+app.locals.isAuthenticated = false;
+app.locals.currentUser = null;
+app.locals.auth = null;
+
+app.use( (req, res, next) => {
+    res.locals.isAuthenticated = req.isAuthenticated();
+    res.locals.currentUser = req.user;
+    next();
 });
-
-/////////////////////////
 
 const passportConfig = require('./config/passport');
 passportConfig();
-
 
 app.listen(3000, () => {
     console.log("port 3000 connect");
 });
 
-
-
 const loginRouter = require('./router/login');
 
-app.use("/login", loginRouter);
+app.use("/auth", loginRouter);
 
+const boardRouter = require('./router/board');
 
-app.get('/', (req, res) => {
-
-   dbConnection.getDB().collection('login').findOne({ user : "test" }, function (err, res) {
-        console.log(res);
-    })
-
-   res.render('board.ejs');
-})
-
+app.use("/board", boardRouter);
 
 
 

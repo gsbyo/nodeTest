@@ -1,6 +1,6 @@
-const MongoClient = require( 'mongodb' ).MongoClient;
+//const MongoClient = require( 'mongodb' ).MongoClient;
 
-let db;
+/*let db;
 
 module.exports = {
   connect(callback) {
@@ -14,4 +14,16 @@ module.exports = {
   getDB() {
     return db;
   }
-};
+};*/
+
+
+const mongoose = require("mongoose");
+ module.exports = () => {
+  mongoose.connect(
+    process.env.DB_URL
+  ).then(() => console.log("Mongoose Connected"))
+    .catch((err) => console.log(err));
+ }
+
+//module.exports = connect;
+

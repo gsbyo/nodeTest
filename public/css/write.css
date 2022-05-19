@@ -1,0 +1,33 @@
+#write-container{
+    width: 1200px;
+    min-height: 600px;
+    margin: 0 auto;
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+
+}
+
+#title-container{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.input-box{
+    padding: 10px;
+}
+
+
+.button-wrap{
+    width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 10px;
+}
+
+.button-wrap button{
+    padding: 10px;
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/public/css/menu.css">
+    </head>
+    <body>
+        <div id="top-menu">
+            <ul>
+                <li id="board" onclick="location.href='/board'" style="cursor: pointer;">Board</li>
+            
+                <% if(isAuthenticated){ %>
+                    <li style="float: right">
+                            <a id="logout" onclick="location.href='/auth/logout'">로그아웃</a>
+                    </li>
+                  
+                <% }else{ %>
+                    <li style="float: right">
+                        <a id="login" onclick="location.href='/auth/login'" style="cursor: pointer;">로그인</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </body>
+</html>
