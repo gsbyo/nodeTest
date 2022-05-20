@@ -4,7 +4,7 @@ let moment = require('moment');
 
 const upload = require('../config/multer');
 
-const boards = require('../schema/board');
+const posts = require('../schema/post');
 const postCount = require('../schema/postCount');
 const comments = require('../schema/comment');
 
@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
 
     var viewCount = 5;
 
-    boards.find({})
+    posts.find({})
           .skip( viewCount * (req.query.page - 1))
           .limit(viewCount)
           .sort({'seq' : - 1})
@@ -83,7 +83,7 @@ router.post('/write', Logged_in, async (req, res) => { // title, eiditData
        day: moment().format("YYYY-MM-DD HH:mm:ss")
    };
 
-   boards.create(board).then( (board) => {
+   posts.create(board).then( (board) => {
        postCount.findOneAndUpdate({}, {$inc : { 'count' : 1 }}, {new : true} ).exec( (err, response) => {
          if(err) return boards.deleteOne({ 'seq' : board.seq });
          console.log("save success");
@@ -139,21 +139,21 @@ router.post('/write/img', Logged_in, upload.single('img'), (req, res) => { //mul
 
 router.get('/post/visited', (req, res) => {
    
-    boards.findOne({ seq: req.query.pid }, async (err, boards_result) => {
+    posts.findOne({ seq: req.query.pid }, async (err, posts_result) => {
         if (err) return console.log(err);
 
         if (req.cookies[req.query.pid] == undefined) {
             res.cookie( "visited_" +req.query.pid, getIP(req), {
                 maxAge: 720000
             })
-            await boards.updateOne({ seq: req.query.pid }, { $inc: { 'views': 1 } });
+            await posts.updateOne({ seq: req.query.pid }, { $inc: { 'views': 1 } });
         }
 
         comments.find({ post_id: req.query.pid })
                 .limit(COMMNET_VIEW_COUNT)
                 .exec( (err, comments_res ) => {
                         comments.find({ post_id : req.query.pid }).count().exec((count_err, count_res ) =>{
-                            res.render('post.ejs', { post: boards_result, comment: comments_res, totalCount : count_res });
+                            res.render('post.ejs', { post: posts_result, comment: comments_res, totalCount : count_res });
                         })
                       })
         })
@@ -202,49 +202,74 @@ router.get('/search/post', (req, res) => {
 
     switch (req.query.smt) {
         case '1':  //1 - title
-          boards.findOne().sort({'seq' : -1}).exec((seq_err, last_post) => { 
-            if(seq_err) return console.log(seq_err);  
-            
-            boards.find({ title: { $regex: '.*' + req.query.stx } })
-                .gte('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
-                .lt('seq',  last_post.seq  - (SEARCH_LIMIT_NUMBER * (n)))
-                .skip( VIEW_COUNT * (req.query.page - 1))
-                .limit(VIEW_COUNT)
-                .exec((err, search_result) => {
-                    if (err) return err;
+            posts.findOne().sort({ 'seq': -1 }).exec((seq_err, last_post) => {
+                if (seq_err) return console.log(seq_err);
 
-                    boards.find({ title: { $regex: '.*' + req.query.stx } })
-                    .gte('seq', last_post.seq  - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
-                    .lt('seq',  last_post.seq  - (SEARCH_LIMIT_NUMBER * (n)))
-                    .count()
-                    .exec((err, search_count) => {
-                        res.render("search.ejs",{ posts : search_result, totalCount : search_count } );
+                posts.find({ title: { $regex: '.*' + req.query.stx } })
+                    .gte('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
+                    .lt('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n)))
+                    .skip(VIEW_COUNT * (req.query.page - 1))
+                    .limit(VIEW_COUNT)
+                    .exec((err, search_result) => {
+                        if (err) return err;
+
+                        posts.find({ title: { $regex: '.*' + req.query.stx } })
+                            .gte('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
+                            .lt('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n)))
+                            .count()
+                            .exec((err, search_count) => {
+                                res.render("search.ejs", { posts: search_result, totalCount: search_count });
+                            });
                     });
-                });
             })
 
             break;
         case '2':  //2 - content 
-            boards.find({ content: { $regex: '.*' + req.query.stx } })
-                .gte('seq', SEARCH_LIMIT_NUMBER * (n - 1))  //  gte => , lt < 
-                .lt('seq', SEARCH_LIMIT_NUMBER * n)
-                .limit(VIEW_COUNT)
-                .exec((err, search_result) => {
-                    if (err) return err;
-                    console.log(search_result);
-                });
+            posts.findOne().sort({ 'seq': -1 }).exec((seq_err, last_post) => {
+                if (seq_err) return console.log(seq_err);
 
+
+                posts.find({ content: { $regex: '.*' + req.query.stx } })
+                    .gte('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
+                    .lt('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n)))
+                    .skip(VIEW_COUNT * (req.query.page - 1))
+                    .limit(VIEW_COUNT)
+                    .exec((err, search_result) => {
+                        if (err) return err;
+
+                        posts.find({ title: { $regex: '.*' + req.query.stx } })
+                            .gte('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
+                            .lt('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n)))
+                            .count()
+                            .exec((err, search_count) => {
+                                res.render("search.ejs", { posts: search_result, totalCount: search_count });
+                            });
+
+                    });
+            })
             break;
         case '3':  //3 - title + content
-            boards.find({})
-                .or([{ title: { $regex: '.*' + req.query.stx } }, { content: { $regex: '.*' + req.query.stx } }])
-                .gte('seq', 0)  //  gte => , lt < 
-                .lt('seq', 15)
-                .limit(VIEW_COUNT)
-                .exec((err, search_result) => {
-                    if (err) return err;
-                    console.log(search_result);
-                });
+            posts.findOne().sort({ 'seq': -1 }).exec((seq_err, last_post) => {
+                if (seq_err) return console.log(seq_err);
+
+                posts.find({})
+                    .or([{ title: { $regex: '.*' + req.query.stx } }, { content: { $regex: '.*' + req.query.stx } }])
+                    .gte('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
+                    .lt('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n)))
+                    .skip(VIEW_COUNT * (req.query.page - 1))
+                    .limit(VIEW_COUNT)
+                    .exec((err, search_result) => {
+                        if (err) return err;
+
+                        posts.find({ title: { $regex: '.*' + req.query.stx } })
+                            .gte('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n + 1)))  //  gte => , lt < 
+                            .lt('seq', last_post.seq - (SEARCH_LIMIT_NUMBER * (n)))
+                            .count()
+                            .exec((err, search_count) => {
+                                res.render("search.ejs", { posts: search_result, totalCount: search_count });
+                            });
+                    });
+            });
     }
 
 });

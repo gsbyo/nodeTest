@@ -4,9 +4,10 @@ const app = express();
 const helmet = require('helmet');
 app.use(
     helmet({
-      contentSecurityPolicy : false,
+        contentSecurityPolicy : false
     })
 );
+
 
 require('dotenv').config();
 

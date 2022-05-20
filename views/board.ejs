@@ -45,7 +45,7 @@
 
     <script>
         $('.post-box').on('click', function(){
-            var post_number = $(this).children('.post-id').text();
+            let post_number = $(this).children('.post-id').text();
             window.location.href = '/board/post/visited?pid='+ post_number;
         });
 

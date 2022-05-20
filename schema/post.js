@@ -4,11 +4,10 @@ var autoIncrement = require('mongoose-auto-increment');
 var connection = mongoose.createConnection(process.env.DB_URL);
 autoIncrement.initialize(connection);
 
-
 const { Schema } = mongoose;
 
 //_id 제목 내용 작성자 날짜 이미지 
-const boardSchema = new Schema({
+const postSchema = new Schema({
   seq: {
     type: Number,
     unique : true
@@ -36,12 +35,12 @@ const boardSchema = new Schema({
 })
 
 
-boardSchema.plugin(autoIncrement.plugin,
-  { model : 'boardSchema', 
+postSchema.plugin(autoIncrement.plugin,
+  { model : 'postSchema', 
     field : 'seq', 
     startAt : 1, //시작 
     increment : 1 // 증가 
   });
 
 
-module.exports = mongoose.model('board', boardSchema);
+module.exports = mongoose.model('post', postSchema);
