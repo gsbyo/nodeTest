@@ -50,6 +50,12 @@
 글쓰기는 summernote editor를 사용하였으며, 게시글에 사진을 올리는 동시에 multer (업로드 라이브러리) 가 지정 된 경로에 이미지를 저장을 한 후 다시
 입력창에 사진을 띄움. 만약 입력창에서 글쓰기를 완료하지 않거나 사진을 지운 경우에도 사진이 이미 업로드가 됨. ( 개선사항 )
 
+댓글은 게시물의 번호를 기준으로 index가 설정되어 있으며, 검색과 게시물의 페이징과 달리 url 방식이 아닌 ajax를 이용하여 구현하였음.
+
+![cc](https://user-images.githubusercontent.com/82531576/169855039-2a38ff07-0352-4bf0-957c-b7877494efa5.PNG)
+
+![cpaging](https://user-images.githubusercontent.com/82531576/169855079-7414f1b9-e039-4da8-9012-3dc72f882bb9.PNG)
+
 보안은 helmet 라이브러리를 사용하였으며 현재 csp를 false로 하고 그 외에는 defalut로 설정되어 있음.
 
 ![defalut](https://user-images.githubusercontent.com/82531576/169322401-3b8b54d3-857c-4a36-9de3-75e93918b4a8.PNG)
@@ -58,3 +64,7 @@
 글쓰기는 summernote editor에서 <br>입력 된 값이 db에 저장될 때 xss필터를 한번 거쳐서 저장됨 <br>
 댓글은 필터를 거치지 않고 저장되는데, ejs에서 넘어온 값이 <%= 댓글 %> 이렇게 들어오는데 이 경우에는 html escape가 필터링을 함.
 <br>sql injection의 경우 mongoose의 쿼리 빌더를 사용을 하여 악용 사용자의 입력값을 방어 할 수 있음.
+
+사용자의 일시적으로 많은 요청을 제어하거나 ddos공격을 방어하기 위하여 express-rate-limit 라이브러리를 사용하였습니다.
+
+![boan](https://user-images.githubusercontent.com/82531576/169855311-a4570486-1ce2-4e24-a8c5-93d86fea3fb4.PNG)
