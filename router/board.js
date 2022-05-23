@@ -177,10 +177,8 @@ router.post('/post/comment', Logged_in, (req, res) => {
 
 router.get('/post/comment', (req, res) => { 
 
-    console.log(req.body)
-
     comments.find({ post_id : req.query.pid })
-    .skip( (req.query.page - 1 ) * 5)
+    .skip( (req.query.page - 1 ) * COMMNET_VIEW_COUNT)
     .limit(COMMNET_VIEW_COUNT)
     .exec( (err, comments_res ) => { 
         comments.find({ post_id : req.query.pid })

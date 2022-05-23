@@ -8,6 +8,20 @@ app.use(
     })
 );
 
+const rateLimit = require("express-rate-limit");
+app.use(rateLimit({
+    windowMs: 60 * 1000,
+    max: 100,
+    delayMs: 0,
+    handler(req, res) {
+        res.status(this.statusCode).json({
+            code: this.statusCode,
+            message: "많은 요청을 시도하였습니다."
+        })
+    }
+})
+);
+
 
 require('dotenv').config();
 
@@ -20,6 +34,8 @@ app.set('view engine', 'ejs');
 
 const passport = require('passport');
 const session = require('express-session');
+
+
 app.use(session({secret : process.env.SESSION_SECRET, resave : true, saveUninitialized: false}));
 app.use(passport.initialize());
 app.use(passport.session()); 
